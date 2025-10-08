@@ -7,7 +7,7 @@
     <link rel="stylesheet" href="{% static 'css/main.css' %}">
 </head>
 <body>
-    <div class="head">
+    <div class="head" style="text-align: center">
     {% if user.is_authenticated %}
         <h4>Hello, {{ user.username }}</h4>
         <form action="{% url 'logout' %}" method="post" style="display: inline;">

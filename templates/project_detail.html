@@ -9,6 +9,9 @@
         <p>Topic: {{ tag }}</p>
         {% endfor %}
     <br>
+<br>
+<br>
+<div style="text-align: center">
     <a href="{% url 'project_view' %}">Back to all projects</a>
     {% if user == detail.author %}
         <hr>
@@ -16,4 +19,5 @@
         <hr>
         <a href="{% url 'project_delete' detail.pk %}">Delete my project</a>
     {% endif %}
+</div>
 {% endblock %}
