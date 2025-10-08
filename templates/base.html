@@ -1,0 +1,26 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link rel="stylesheet" href="{% static 'css/main.css' %}">
+</head>
+<body>
+    <div class="head">
+    {% if user.is_authenticated %}
+        <h4>Hello, {{ user.username }}</h4>
+        <form action="{% url 'logout' %}" method="post" style="display: inline;">
+            {% csrf_token %}
+            <button type="submit" class="logout-button">Вийти з аккаунту</button>
+        </form>
+    {% else %}
+        <a href="{% url 'login' %}"><h4>Увійти</h4></a>
+    {% endif %}
+    </div>
+    <div class="main">
+        {% block content %}
+        {% endblock %}
+    </div>
+</body>
+</html>

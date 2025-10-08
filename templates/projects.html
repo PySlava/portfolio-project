@@ -1,0 +1,21 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <form action="" method="get">
+        <input type="text" name="search_query" placeholder="Finder..." value="{{ search_query }}">
+        <button type="submit">Find...</button>
+    </form>
+    {% for p in my_project %}
+        {% for tag in p.tags.all %}
+            <h3><a href="{% url 'project_detail' p.id %}">{{ p.title }}</a></h3>
+            <p>{{ p.description }}</p>
+            <br>
+            <p><i>{{ p.author.username }}</i> - <i>{{ tag }}</i></p>
+            <hr>
+        {% endfor %}
+    {% empty %}
+        <p>List it empty</p>
+    {% endfor %}
+        <br>
+        <a href="{% url 'project_create' %}">Create New Project</a>
+{% endblock %}

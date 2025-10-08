@@ -1,0 +1,12 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Головна сторінка</title>
+    </head>
+    <body style="text-align: center">
+        <h2>Контакти</h2>
+        {% for k, v in contacts.items %}
+        <p><b>{{ k }}</b>: {{ v }}</p>
+        {% endfor %}
+    </body>
+</html>

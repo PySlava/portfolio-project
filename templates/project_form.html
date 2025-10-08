@@ -1,0 +1,14 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    {% if form.instance.pk %}
+        <h1>Редагувати проєкт: {{ form.instance.title }}</h1>
+    {% else %}
+        <h1>Створити новий проєкт</h1>
+    {% endif %}
+    <form method="POST">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit">Зберегти</button>
+    </form>
+{% endblock %}
