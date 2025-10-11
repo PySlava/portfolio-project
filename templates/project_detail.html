@@ -1,6 +1,9 @@
 {% extends 'base.html' %}
 
 {% block content %}
+    {% if detail.image %}
+        <img src="{{ detail.image.url }}" alt="{{ detail.title }}" width="400">
+    {% endif %}
     <h1>Title: {{ detail.title }}</h1>
     <p>Description: {{ detail.description }}</p>
     <h4>Created at: {{ detail.created_at }}</h4>
