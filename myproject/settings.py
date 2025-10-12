@@ -23,6 +23,17 @@ if DEBUG:
             conn_max_age=600,
         )
     }
+    CACHES = {
+        "default": {
+            "BACKEND": "django_redis.cache.RedisCache",
+            "LOCATION": "redis://localhost:6379/1",
+            "OPTIONS": {
+                "CLIENT_CLASS": "django_redis.client.DefaultClient"
+            }
+        }
+    }
+    CELERY_BROKER_URL = 'redis://localhost:6379/0'
+    CELERY_RESULT_BACKEND = 'redis://localhost:6379/0'
 else:
     logger.info("Connected to production PostgreSQL.")
     DATABASES = {
@@ -31,6 +42,17 @@ else:
             conn_max_age=600,
         )
     }
+    CACHES = {
+        "default": {
+            "BACKEND": "django_redis.cache.RedisCache",
+            "LOCATION": config("PROD_CACHE_URL"),
+            "OPTIONS": {
+                "CLIENT_CLASS": "django_redis.client.DefaultClient"
+            }
+        }
+    }
+    CELERY_BROKER_URL = config('PROD_CACHE_URL')
+    CELERY_RESULT_BACKEND = config('PROD_CACHE_URL')
 
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -129,19 +151,6 @@ AUTHENTICATION_BACKENDS = [
 ]
 
 SITE_ID = 1
-
-CELERY_BROKER_URL = 'redis://localhost:6379/0'
-CELERY_RESULT_BACKEND = 'redis://localhost:6379/0'
-
-CACHES = {
-    "default": {
-        "BACKEND": "django_redis.cache.RedisCache",
-        "LOCATION": "redis://localhost:6379/1",
-        "OPTIONS": {
-            "CLIENT_CLASS": "django_redis.client.DefaultClient"
-        }
-    }
-}
 
 LOGGING = {
     'version': 1,
