@@ -3,6 +3,8 @@ from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.db.models import Q
 from django.shortcuts import render
 from django.urls import reverse_lazy, reverse
+from django.utils.decorators import method_decorator
+from django.views.decorators.cache import cache_page
 from rest_framework import viewsets
 from rest_framework.permissions import IsAuthenticatedOrReadOnly
 from .forms import ProjectForm
@@ -25,6 +27,7 @@ def contact_view(request):
     return render(request, 'contacts.html', {'contacts': menu_contacts})
 
 
+@method_decorator(cache_page(60), name='dispatch')
 class ProjectListView(ListView):
     model = Project
     template_name = 'projects.html'
@@ -98,4 +101,3 @@ class ProjectViewSet(viewsets.ModelViewSet):
     serializer_class = ProjectSerializer
     permission_classes = (IsAuthorOrReadOnly, IsAuthenticatedOrReadOnly)
     pagination_class = CustomPagination
-
