@@ -1,0 +1,29 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <form action="" method="get">
+        <input type="text" name="search_query" placeholder="Finder..." value="{{ search_query }}">
+        <button type="submit">Find...</button>
+    </form>
+    {% for p in my_project %}
+        {% if p.image %}
+            <img src="{{ p.image.url }}" alt="{{ p.title }}" width="200">
+        {% endif %}
+        <h3><a href="{% url 'project_detail' p.id %}">{{ p.title }}</a></h3>
+        <p>{{ p.description }}</p>
+        <br>
+        <p>
+            <i>Автор: {{ p.author.username }}</i>
+            <br>
+            Теги:
+            {% for tag in p.tags.all %}
+                <span>{{ tag }}</span>{% if not forloop.last %}, {% endif %}
+            {% endfor %}
+        </p>
+        <hr>
+    {% empty %}
+        <p>List it empty</p>
+    {% endfor %}
+    <br>
+    <a href="{% url 'project_create' %}">Create New Project</a>
+{% endblock %}

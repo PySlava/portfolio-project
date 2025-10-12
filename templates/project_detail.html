@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    {% if detail.image %}
+        <img src="{{ detail.image.url }}" alt="{{ detail.title }}" width="400">
+    {% endif %}
+    <h1>Title: {{ detail.title }}</h1>
+    <p>Description: {{ detail.description }}</p>
+    <h4>Created at: {{ detail.created_at }}</h4>
+    <p>Create author: <i>{{ detail.author.username }}</i></p>
+        {% for tag in p.tags.all %}
+        <p>Topic: {{ tag }}</p>
+        {% endfor %}
+    <br>
+<br>
+<br>
+<div style="text-align: center">
+    <a href="{% url 'project_view' %}">Back to all projects</a>
+    {% if user == detail.author %}
+        <hr>
+        <a href="{% url 'project_update' detail.pk %}">Update my project</a>
+        <hr>
+        <a href="{% url 'project_delete' detail.pk %}">Delete my project</a>
+    {% endif %}
+</div>
+{% endblock %}
