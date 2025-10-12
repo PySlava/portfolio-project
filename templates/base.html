@@ -10,12 +10,12 @@
     <div class="head" style="text-align: center">
     {% if user.is_authenticated %}
         <h4>Hello, {{ user.username }}</h4>
-        <form action="{% url 'logout' %}" method="post" style="display: inline;">
+        <form action="{% url 'account_logout' %}" method="post" style="display: inline;">
             {% csrf_token %}
             <button type="submit" class="logout-button">Вийти з аккаунту</button>
         </form>
     {% else %}
-        <a href="{% url 'login' %}"><h4>Увійти</h4></a>
+        <a href="{% url 'account_login' %}"><h4>Увійти</h4></a>
     {% endif %}
     </div>
     <div class="main">

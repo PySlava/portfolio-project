@@ -1,5 +1,6 @@
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
+from django.contrib.postgres.search import SearchVector, SearchQuery, SearchRank
 from django.db.models import Q
 from django.shortcuts import render
 from django.urls import reverse_lazy, reverse
@@ -37,11 +38,9 @@ class ProjectListView(ListView):
         search_query = self.request.GET.get('search_query', None)
         queryset = Project.objects.all()
         if search_query:
-            queryset = queryset.filter(
-                Q(title__icontains=search_query) |
-                Q(description__icontains=search_query)
-            )
-        queryset = queryset.order_by('-created_at')
+            vector = SearchVector('title', 'description')
+            query = SearchQuery(search_query)
+            queryset = queryset.annotate(rank=SearchRank(vector, query)).filter(rank__gt=0).order_by('-rank')
         return queryset
 
     def get_context_data(self, *, object_list=None, **kwargs):
