@@ -1,9 +1,10 @@
 from django.contrib.auth.models import User
-from myproject import logger
+import logging
 from myproject.celery import app
 from django.core.mail import send_mail
 from django.conf import settings
 
+logger = logging.getLogger(__name__)
 
 @app.task
 def send_welcome_email_task(user_id):

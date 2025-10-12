@@ -3,7 +3,9 @@ from pathlib import Path
 from decouple import config
 import os
 import dj_database_url
-from . import logger
+import logging
+
+logger = logging.getLogger(__name__)
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -139,4 +141,25 @@ CACHES = {
             "CLIENT_CLASS": "django_redis.client.DefaultClient"
         }
     }
+}
+
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'formatters': {
+        'verbose': {
+            'format': '{levelname} - {asctime} - {module} - {funcName} - {message}',
+            'style': '{',
+        },
+    },
+    'handlers': {
+        'console': {
+            'class': 'logging.StreamHandler',
+            'formatter': 'verbose',
+        },
+    },
+    'root': {
+        'handlers': ['console'],
+        'level': 'INFO',
+    },
 }
