@@ -172,3 +172,12 @@ LOGGING = {
         'level': 'INFO',
     },
 }
+
+SOCIALACCOUNT_PROVIDERS = {
+    'google': {
+        'SCOPE': ['profile', 'email'],
+        'AUTH_PARAMS': {'access_type': 'online'},
+        'CLIENT_ID': config('GOOGLE_CLIENT_ID', default=''),
+        'SECRET': config('GOOGLE_SECRET_KEY', default=''),
+    }
+}
