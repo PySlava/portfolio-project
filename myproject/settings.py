@@ -1,58 +1,51 @@
 import sys
 from pathlib import Path
-from decouple import config
+from decouple import Config, RepositoryEnv
 import os
 import dj_database_url
 import logging
+
+config_dev = Config(RepositoryEnv('.env.dev'))
+config_prod = Config(RepositoryEnv('.env.prod'))
+
+APP_ENV = os.environ.get('APP_ENV', 'dev')
+
+if APP_ENV == 'prod':
+    config = config_prod
+else:
+    config = config_dev
 
 logger = logging.getLogger(__name__)
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 SECRET_KEY = config('SECRET_KEY')
-DEBUG = config('DEBUG', default=False, cast=bool)
+DEBUG = config('DEBUG', cast=bool)
 
 ALLOWED_HOSTS = ["portfolio-project-jepp.onrender.com", "localhost", "127.0.0.1"]
 
-if DEBUG:
-    if 'runserver' in sys.argv:
-        logger.info("Connected to local PostgreSQL.")
-    DATABASES = {
-        'default': dj_database_url.parse(
-            config('DEV_DATABASE_URL'),
-            conn_max_age=600,
-        )
-    }
-    CACHES = {
-        "default": {
-            "BACKEND": "django_redis.cache.RedisCache",
-            "LOCATION": "redis://localhost:6379/1",
-            "OPTIONS": {
-                "CLIENT_CLASS": "django_redis.client.DefaultClient"
-            }
+DATABASES = {
+    'default': dj_database_url.parse(
+        config('DATABASE_URL'),
+        conn_max_age=600,
+    )
+}
+CACHES = {
+    "default": {
+        "BACKEND": "django_redis.cache.RedisCache",
+        "LOCATION": config('CACHE_URL'),
+        "OPTIONS": {
+            "CLIENT_CLASS": "django_redis.client.DefaultClient"
         }
     }
-    CELERY_BROKER_URL = 'redis://localhost:6379/0'
-    CELERY_RESULT_BACKEND = 'redis://localhost:6379/0'
-else:
-    logger.info("Connected to production PostgreSQL.")
-    DATABASES = {
-        'default': dj_database_url.parse(
-            config('PROD_DATABASE_URL'),
-            conn_max_age=600,
-        )
-    }
-    CACHES = {
-        "default": {
-            "BACKEND": "django_redis.cache.RedisCache",
-            "LOCATION": config("PROD_CACHE_URL"),
-            "OPTIONS": {
-                "CLIENT_CLASS": "django_redis.client.DefaultClient"
-            }
-        }
-    }
-    CELERY_BROKER_URL = config('PROD_CACHE_URL')
-    CELERY_RESULT_BACKEND = config('PROD_CACHE_URL')
+}
+CELERY_BROKER_URL = config('BROKER_URL')
+CELERY_RESULT_BACKEND = config('BROKER_URL')
+
+if DEBUG and 'runserver' in sys.argv:
+    logger.info("Running in DEV mode. Connected to local PostgreSQL.")
+elif not DEBUG:
+    logger.info("Running in PROD mode. Connected to production PostgreSQL.")
 
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -150,7 +143,7 @@ AUTHENTICATION_BACKENDS = [
     'allauth.account.auth_backends.AuthenticationBackend',
 ]
 
-SITE_ID = 1
+SITE_ID = 2
 
 LOGGING = {
     'version': 1,
