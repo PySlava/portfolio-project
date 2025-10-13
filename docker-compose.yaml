@@ -19,11 +19,12 @@ services:
     ports:
       - "8000:8000"
     env_file:
-      - .env.dev
+      - .env
     environment:
       - DATABASE_URL=postgresql://postgres:postgres@db:5432/portfolio
       - CACHE_URL=redis://redis:6379/1
       - BROKER_URL=redis://redis:6379/0
+      - DJANGO_SETTINGS_MODULE=${DJANGO_SETTINGS_MODULE}
       
     depends_on:
       - db

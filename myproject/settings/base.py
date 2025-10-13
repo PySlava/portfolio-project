@@ -1,51 +1,16 @@
-import sys
-from pathlib import Path
-from decouple import Config, RepositoryEnv
 import os
-import dj_database_url
+import sys
 import logging
-
-config_dev = Config(RepositoryEnv('.env.dev'))
-config_prod = Config(RepositoryEnv('.env.prod'))
-
-APP_ENV = os.environ.get('APP_ENV', 'dev')
-
-if APP_ENV == 'prod':
-    config = config_prod
-else:
-    config = config_dev
-
-logger = logging.getLogger(__name__)
+from pathlib import Path
+from decouple import config
+import dj_database_url
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 SECRET_KEY = config('SECRET_KEY')
-DEBUG = config('DEBUG', cast=bool)
+DEBUG = config('DEBUG', cast=bool, default=False)
 
 ALLOWED_HOSTS = ["portfolio-project-jepp.onrender.com", "localhost", "127.0.0.1"]
-
-DATABASES = {
-    'default': dj_database_url.parse(
-        config('DATABASE_URL'),
-        conn_max_age=600,
-    )
-}
-CACHES = {
-    "default": {
-        "BACKEND": "django_redis.cache.RedisCache",
-        "LOCATION": config('CACHE_URL'),
-        "OPTIONS": {
-            "CLIENT_CLASS": "django_redis.client.DefaultClient"
-        }
-    }
-}
-CELERY_BROKER_URL = config('BROKER_URL')
-CELERY_RESULT_BACKEND = config('BROKER_URL')
-
-if DEBUG and 'runserver' in sys.argv:
-    logger.info("Running in DEV mode. Connected to local PostgreSQL.")
-elif not DEBUG:
-    logger.info("Running in PROD mode. Connected to production PostgreSQL.")
 
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -60,7 +25,7 @@ INSTALLED_APPS = [
     'allauth',
     'allauth.account',
     'allauth.socialaccount',
-    'allauth.socialaccount.providers.google'
+    'allauth.socialaccount.providers.google',
 ]
 
 MIDDLEWARE = [
@@ -95,31 +60,23 @@ TEMPLATES = [
 WSGI_APPLICATION = 'myproject.wsgi.application'
 
 AUTH_PASSWORD_VALIDATORS = [
-    {
-        'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
-    },
-    {
-        'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',
-    },
-    {
-        'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator',
-    },
-    {
-        'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
-    },
+    {'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator'},
+    {'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator'},
+    {'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator'},
+    {'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator'},
 ]
 
 LANGUAGE_CODE = 'en-us'
-
 TIME_ZONE = 'UTC'
-
 USE_I18N = True
-
 USE_TZ = True
 
 STATIC_URL = '/static/'
-STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+STATIC_ROOT = BASE_DIR / 'staticfiles'
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+
+MEDIA_URL = '/media/'
+MEDIA_ROOT = BASE_DIR / 'media'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
@@ -127,10 +84,8 @@ LOGIN_URL = '/login/'
 LOGIN_REDIRECT_URL = '/project/'
 LOGOUT_REDIRECT_URL = '/'
 
-MEDIA_URL = '/media/'
-MEDIA_ROOT = BASE_DIR / 'media'
-
 DEFAULT_FROM_EMAIL = 'no-reply@yourdomain.com'
+
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_PORT = 587
@@ -149,21 +104,10 @@ LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,
     'formatters': {
-        'verbose': {
-            'format': '{levelname} - {asctime} - {module} - {funcName} - {message}',
-            'style': '{',
-        },
+        'verbose': {'format': '{levelname} - {asctime} - {module} - {funcName} - {message}', 'style': '{'},
     },
-    'handlers': {
-        'console': {
-            'class': 'logging.StreamHandler',
-            'formatter': 'verbose',
-        },
-    },
-    'root': {
-        'handlers': ['console'],
-        'level': 'INFO',
-    },
+    'handlers': {'console': {'class': 'logging.StreamHandler', 'formatter': 'verbose'}},
+    'root': {'handlers': ['console'], 'level': 'INFO'},
 }
 
 SOCIALACCOUNT_PROVIDERS = {
