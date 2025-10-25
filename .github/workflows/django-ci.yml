@@ -13,19 +13,22 @@ jobs:
     services:
       db:
         image: postgres:17
-        environment:
+        env:
           POSTGRES_DB: test_db
           POSTGRES_USER: test_user
           POSTGRES_PASSWORD: test_pass
-
         options: >-
           --health-cmd pg_isready
           --health-interval 10s
           --health-timeout 5s
           --health-retries 5
+        ports:
+          - 5432:5432
 
       redis:
         image: redis:7-alpine
+        ports:
+          - 6379:6379
 
     steps:
       - name: Checkout repository
@@ -46,9 +49,9 @@ jobs:
 
       - name: Run Django tests
         env:
-          DATABASE_URL: "postgresql://test_user:test_pass@localhost:${{ job.services.db.ports['5432'] }}/test_db"
-          CACHE_URL: "redis://localhost:${{ job.services.redis.ports['6379'] }}/1"
-          BROKER_URL: "redis://localhost:${{ job.services.redis.ports['6379'] }}/0"
+          DATABASE_URL: "postgresql://test_user:test_pass@db:5432/test_db"
+          CACHE_URL: "redis://redis:6379/1"
+          BROKER_URL: "redis://redis:6379/0"
           SECRET_KEY: "dummy-secret-key-for-ci"
         run: |
           python manage.py test
